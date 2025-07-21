@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Earned Timer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 30px;
+            letter-spacing: -0.5px;
+        }
+
+        .input-group {
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper::before {
+            content: '€';
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #718096;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 16px 16px 16px 40px;
+            font-size: 1.1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f7fafc;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .output {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .time-display {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+
+        .earned-display {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #38a169;
+            margin-bottom: 20px;
+        }
+
+        .earned-label {
+            font-size: 0.9rem;
+            color: #718096;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .reset-button {
+            background: #e53e3e;
+            color: white;
+            padding: 12px 24px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .reset-button:hover {
+            background: #c53030;
+            transform: translateY(-1px);
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+                border-radius: 20px;
+            }
+
+            .title {
+                font-size: 1.5rem;
+                margin-bottom: 25px;
+            }
+
+            .time-display {
+                font-size: 2.5rem;
+            }
+
+            .earned-display {
+                font-size: 2rem;
+            }
+
+            .input-group input {
+                padding: 14px 14px 14px 35px;
+                font-size: 1rem;
+            }
+
+            .button {
+                padding: 14px 24px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Money Earned Timer</h1>
+        
+        <div class="input-group" id="inputGroup">
+            <label for="rateInput">Hourly Rate</label>
+            <div class="input-wrapper">
+                <input type="number" id="rateInput" placeholder="0.00" min="0" step="0.01">
+            </div>
+        </div>
+        
+        <button class="button" onclick="startTimer()">Start Timer</button>
+        
+        <div class="output" id="outputDisplay">
+            <div class="time-display" id="timeDisplay">0:00:00</div>
+            <div class="earned-label">Money Earned</div>
+            <div class="earned-display pulse">€<span id="earnedDisplay">0.000</span></div>
+            <button class="reset-button" onclick="resetTimer()">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        let timerInterval;
+        let startTime;
+        let hourlyRate = 0;
+        let isRunning = false;
+
+        function startTimer() {
+            const rateInput = document.getElementById('rateInput').value;
+            if (!rateInput || rateInput <= 0) {
+                alert("Please enter a valid hourly rate.");
+                return;
+            }
+            
+            if (isRunning) return;
+            
+            hourlyRate = parseFloat(rateInput);
+            startTime = Date.now();
+            isRunning = true;
+
+            // Hide input and start button, show output display
+            document.getElementById('inputGroup').style.display = 'none';
+            document.querySelector('.button').style.display = 'none';
+            document.getElementById('outputDisplay').style.display = 'block';
+
+            // Start updating earnings at 10 times per second
+            timerInterval = setInterval(updateDisplay, 100);
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            
+            // Reset display
+            document.getElementById('timeDisplay').textContent = '0:00:00';
+            document.getElementById('earnedDisplay').textContent = '0.000';
+            
+            // Show input and start button, hide output display
+            document.getElementById('inputGroup').style.display = 'block';
+            document.querySelector('.button').style.display = 'block';
+            document.getElementById('outputDisplay').style.display = 'none';
+            
+            // Clear input
+            document.getElementById('rateInput').value = '';
+        }
+
+        function updateDisplay() {
+            const elapsed = (Date.now() - startTime) / 1000; // in seconds
+            const hours = Math.floor(elapsed / 3600);
+            const minutes = Math.floor((elapsed % 3600) / 60);
+            const seconds = Math.floor(elapsed % 60);
+
+            document.getElementById('timeDisplay').textContent = 
+                `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            const earned = ((hourlyRate / 3600) * elapsed).toFixed(3);
+            document.getElementById('earnedDisplay').textContent = earned;
+        }
+
+        // Add enter key support
+        document.getElementById('rateInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                startTimer();
+            }
+        });
+    </script>
+</body>
+</html>
